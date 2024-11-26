@@ -16,19 +16,19 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "diaryTable")
 public class DiaryClass {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int did;
-	
+
 	@JsonFormat(pattern = "dd-MM-yyyy hh:mm:ss",shape = JsonFormat.Shape.STRING)
 	@Column(nullable = false)
 	private String ddate;
-	
-	
+
+
 	@Column(nullable = false)
 	private String data;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid", nullable = false)
 	@JsonIgnore
@@ -70,7 +70,7 @@ public class DiaryClass {
 	public void setData(String data) {
 		this.data = data;
 	}
-	
+
 	public UserClass getUid() {
 		return uid;
 	}
@@ -83,6 +83,6 @@ public class DiaryClass {
 	public String toString() {
 		return "DairyClass [did=" + did + ", ddate=" + ddate  + ", data=" + data + "]";
 	}
-	
-	
+
+
 }

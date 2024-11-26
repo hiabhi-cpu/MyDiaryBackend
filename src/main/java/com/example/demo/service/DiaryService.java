@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.ErrorResponseException;
 
 import com.example.demo.model.DiaryClass;
+import com.example.demo.model.UserClass;
 import com.example.demo.repository.DiaryRepo;
 import com.example.demo.repository.UserRepo;
 
@@ -16,7 +17,7 @@ import com.example.demo.repository.UserRepo;
 public class DiaryService {
 	@Autowired
 	DiaryRepo diaryRepo;
-	
+
 	@Autowired
 	private UserRepo userRepo;
 
@@ -31,21 +32,27 @@ public class DiaryService {
 		return diaryRepo.save(diary);
 	}
 
-	public DiaryClass putEntry(int id, DiaryClass diary) {
+	public DiaryClass putEntry(int uid, int did, DiaryClass diary) {
 		// TODO Auto-generated method stub
-		DiaryClass temp=diaryRepo.findById(id).orElseThrow(()->new ErrorResponseException(HttpStatus.NOT_FOUND));
+		DiaryClass temp=diaryRepo.findById(did).orElseThrow(()->new ErrorResponseException(HttpStatus.NOT_FOUND));
+		if(temp.getUid().getUid()!=uid) {
+			throw new ErrorResponseException(HttpStatus.UNAUTHORIZED);
+		}
 		temp.setDdate(diary.getDdate());
 		temp.setData(diary.getData());
 		return diaryRepo.save(temp);
 	}
 
-	public String deleteEntry(int id) {
+	public String deleteEntry(int uid, int did) {
 		// TODO Auto-generated method stub
-		DiaryClass temp=diaryRepo.findById(id).orElseThrow(()->new ErrorResponseException(HttpStatus.NOT_FOUND));
-		diaryRepo.deleteById(id);
+		DiaryClass temp=diaryRepo.findById(did).orElseThrow(()->new ErrorResponseException(HttpStatus.NOT_FOUND));
+		if(temp.getUid().getUid()!=uid) {
+			throw new ErrorResponseException(HttpStatus.UNAUTHORIZED);
+		}
+		diaryRepo.deleteById(did);
 		return "Deleted";
 	}
-	
+
 	private ProblemDetail getErrorMsg(String msg) {
 		ProblemDetail pd=ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, msg);
 		return pd;
@@ -59,11 +66,15 @@ public class DiaryService {
 			// TODO: handle exception
 			throw new ErrorResponseException(HttpStatus.BAD_REQUEST);
 		}
-		
+
 	}
 
-	public DiaryClass getDiaryPerId(int id) {
+	public DiaryClass getDiaryPerId(int uid, int did) {
 		// TODO Auto-generated method stub
-		return diaryRepo.findById(id).orElseThrow(()->new ErrorResponseException(HttpStatus.BAD_REQUEST));
+		DiaryClass temp= diaryRepo.findById(did).orElseThrow(()->new ErrorResponseException(HttpStatus.BAD_REQUEST));
+		if(temp.getUid().getUid()!=uid) {
+			throw new ErrorResponseException(HttpStatus.UNAUTHORIZED);
+		}
+		return temp;
 	}
 }
