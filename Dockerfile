@@ -11,14 +11,14 @@ COPY src ./src
 # Build the application, skipping tests
 RUN mvn clean package -DskipTests=true
 
+# Debug: List the contents of the /app/target directory after build
+RUN ls -l /app/target
+
 # Stage 2: Run the application
 FROM openjdk:17-jdk-slim
 
 # Set the working directory
 WORKDIR /app
-
-# Debug: List the contents of the working directory after build
-RUN ls -l /app
 
 # Copy the JAR file from the build stage
 COPY --from=build /app/target/MyDiaryBackend-0.0.1.jar app.jar
