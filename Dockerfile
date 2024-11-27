@@ -18,7 +18,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY target/MyDiaryBackend-0.0.1.jar app.jar
+COPY --from=build /app/target/MyDiaryBackend-0.0.1.jar app.jar
 
 # Expose the port your application runs on
 EXPOSE 8080
