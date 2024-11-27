@@ -17,6 +17,8 @@ FROM openjdk:17-jdk-slim
 # Set the working directory
 WORKDIR /app
 
+RUN dir
+
 # Copy the JAR file from the build stage
 COPY --from=build /app/target/MyDiaryBackend-0.0.1.jar app.jar
 
