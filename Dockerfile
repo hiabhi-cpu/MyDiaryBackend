@@ -5,7 +5,7 @@ FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
 
 # Copy the Maven project files into the container
-COPY pom.xml .  
+COPY pom.xml .
 COPY src ./src
 
 # Build the application, skipping tests
@@ -33,6 +33,9 @@ ENV MYSQL_DATABASE=mydiarydb
 ENV MYSQL_USER=myuser
 ENV MYSQL_PASSWORD=mypassword
 ENV MYSQL_ROOT_PASSWORD=rootpassword
+ENV MYSQL_HOST=localhost
+ENV MYSQL_PORT=3306
+ENV DB_URL=jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DATABASE}
 
 # Initialize MySQL database
 RUN service mysql start && \
@@ -47,4 +50,8 @@ EXPOSE 3306
 EXPOSE 8080
 
 # Command to start both MySQL and the application
-CMD service mysql start && java -jar app.jar
+CMD service mysql start && \
+    java -jar -Dspring.datasource.url=${DB_URL} \
+              -Dspring.datasource.username=${MYSQL_USER} \
+              -Dspring.datasource.password=${MYSQL_PASSWORD} \
+              app.jar
